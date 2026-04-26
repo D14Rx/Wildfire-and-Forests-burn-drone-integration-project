@@ -5,6 +5,7 @@ from pathlib import Path
 import asyncio
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from psql_forestwatch import post_data
 from datetime import datetime
 from watchdog import observers
 from watchdog.events import FileSystemEventHandler
@@ -39,7 +40,7 @@ app = FastAPI()
 
 @app.post("/resources")
 async def add_d():
-
+    
     path = Path("../yolo8/runs/detect/predict*/labels/test_tree.txt")
     all_files = list(Path("../yolo8/runs/detect/").glob("predict*/labels/test_tree.txt"))
 
@@ -66,6 +67,8 @@ async def add_d():
             chance = float(num_c)
             print(f"chance: {chance:.2f}")
 
+        await post_data(tree_found, fire_found, chance)
+        
         if tree_found:
             print("Tree spotted")
         if fire_found:
@@ -84,4 +87,4 @@ async def main():
     await add_d()
 
 if __name__ == "__main__":
-    asyncio.run(main())  
+    asyncio.run(main())   
